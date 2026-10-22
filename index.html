@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f2f2eb" />
+    <meta name="description" content="Japan Soaring Club。クラブ員のWeGlideフライトを数字で振り返るダッシュボード。" />
+    <title>Japan Soaring Club | WeGlide Flight Desk</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand-logo-link" href="#top" aria-label="Japan Soaring Club home">
+        <img class="brand-logo" src="JSCLogo1%20.jpg" alt="Japan Soaring Club" />
+      </a>
+      <a class="source-link" href="https://www.weglide.org/club/709" target="_blank" rel="noreferrer">
+        <span class="source-dot"></span> WEGLIDE DATA <span aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <main id="top">
+      <section class="masthead">
+        <div class="masthead-copy">
+          <p class="eyebrow"><span class="eyebrow-line"></span> JAPAN · CLUB 709</p>
+          <h1>Japan Soaring <span>Club</span></h1>
+          <p class="intro">クラブ員のフライトを数字で振り返る。</p>
+          <p class="data-note">本サイトの入力データは、<a href="https://www.weglide.org/" target="_blank" rel="noreferrer">WeGlide</a>にアップロードされたフライトです。</p>
+        </div>
+        <div class="controls" aria-label="ランキング条件">
+            <div class="segmented-control" role="group" aria-label="フライト地域">
+              <button class="segment-button is-active" type="button" data-region="domestic" aria-pressed="true">日本国内</button>
+              <button class="segment-button" type="button" data-region="overseas" aria-pressed="false">海外</button>
+            </div>
+          <label for="season-select">SEASON
+            <select id="season-select" aria-label="シーズン"></select>
+          </label>
+          <label for="month-select">MONTH
+            <select id="month-select" aria-label="月">
+              <option value="all">全月</option>
+              <option value="01">1月</option>
+              <option value="02">2月</option>
+              <option value="03">3月</option>
+              <option value="04">4月</option>
+              <option value="05">5月</option>
+              <option value="06">6月</option>
+              <option value="07">7月</option>
+              <option value="08">8月</option>
+              <option value="09">9月</option>
+              <option value="10">10月</option>
+              <option value="11">11月</option>
+              <option value="12">12月</option>
+            </select>
+          </label>
+          <label for="class-select">CLASS
+            <select id="class-select" aria-label="クラス">
+              <option value="all">All Class</option>
+              <option value="club">Club Class</option>
+              <option value="club-aircraft">クラブ機Class</option>
+            </select>
+          </label>
+          <button id="download-button" class="icon-button" type="button" aria-label="集計結果をCSVでダウンロード" title="集計結果をCSVでダウンロード">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 15v5h14v-5" /></svg>
+          </button>
+          <button id="refresh-button" class="icon-button" type="button" aria-label="データを更新" title="データを更新">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5" /><path d="M5.6 9a7 7 0 0 1 11.8-2L20 12M4 12l2.6 5a7 7 0 0 0 11.8-2" /></svg>
+          </button>
+        </div>
+      </section>
+
+      <div id="status" class="status" role="status" aria-live="polite">
+        <span class="status-indicator"></span><span id="status-text">WeGlideからフライトを読み込み中</span>
+      </div>
+
+      <section class="metric-strip" aria-label="シーズン概要">
+        <article class="metric">
+          <p class="metric-label">FLIGHTS LOGGED</p>
+          <p id="metric-flights" class="metric-value">—</p>
+          <p class="metric-note">選択期間の記録数</p>
+        </article>
+        <article class="metric">
+          <p class="metric-label">ACTIVE PILOTS</p>
+          <p id="metric-pilots" class="metric-value">—</p>
+          <p class="metric-note">フライトを記録した主操縦者</p>
+        </article>
+        <article class="metric metric-highlight">
+          <p class="metric-label">TOP FLIGHT</p>
+          <p id="metric-points" class="metric-value">—</p>
+          <p id="metric-points-note" class="metric-note">最高得点</p>
+        </article>
+        <article class="metric">
+          <p class="metric-label">LONGEST FLIGHT</p>
+          <p id="metric-distance" class="metric-value">—</p>
+          <p id="metric-distance-note" class="metric-note">最長距離</p>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <div class="panel monthly-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow"><span class="eyebrow-line"></span> MONTH BY MONTH</p>
+              <h2>月間ベストフライト</h2>
+            </div>
+            <span class="section-index">01 / SCORE</span>
+          </div>
+          <p id="monthly-caption" class="section-description">各月の全順位を表示。上位3名は表彰台で強調します。</p>
+          <div id="monthly-ranking" class="monthly-list">
+            <p class="empty-state">フライトデータを読み込んでいます。</p>
+          </div>
+        </div>
+
+        <aside class="panel ranking-panel">
+          <div class="section-heading ranking-heading">
+            <div>
+              <p id="ranking-eyebrow" class="eyebrow"><span class="eyebrow-line"></span> FLIGHT INDEX</p>
+              <h2 id="ranking-title">個別Indexランキング</h2>
+            </div>
+            <span class="section-index">02 / DATA</span>
+          </div>
+          <label class="ranking-select-label" for="ranking-select">RANK BY
+            <select id="ranking-select">
+              <option value="thermal">平均上昇率</option>
+              <option value="glide">平均滑空比</option>
+              <option value="speed">平均速度（50km以上）</option>
+              <option value="duration">飛行時間</option>
+            </select>
+          </label>
+          <p id="ranking-caption" class="section-description compact">各フライトの平均サーマル上昇率で比較します。</p>
+          <div id="pilot-ranking" class="pilot-list">
+            <p class="empty-state">集計中です。</p>
+          </div>
+          <p id="ranking-footnote" class="footnote">各フライトのWeGlide主操縦者名義で表示しています。</p>
+        </aside>
+      </section>
+
+      <section class="bottom-band">
+        <div class="method-note">
+          <span class="note-symbol" aria-hidden="true">↗</span>
+          <div>
+            <p class="metric-label">HOW TO READ</p>
+            <p>地域は離陸空港コードで区分（JP＝国内、その他＝海外）。上昇率・滑空比・速度はフライトごとに比較し、平均速度は飛行距離50km以上の便が対象です。</p>
+          </div>
+        </div>
+        <div class="updated-block">
+          <p class="metric-label">LAST SYNC</p>
+          <p id="last-sync" class="updated-time">—</p>
+          <p class="footnote">公開APIの最新データ</p>
+        </div>
+      </section>
+      <footer class="footer">
+        <span>JAPAN SOARING CLUB · WEGLIDE PUBLIC API</span>
+        <a href="https://api.weglide.org/redoc" target="_blank" rel="noreferrer">API REFERENCE ↗</a>
+      </footer>
+    </main>
+  </body>
+</html>
